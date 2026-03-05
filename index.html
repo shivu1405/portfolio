@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivasri — LinkedIn Ghostwriter for Founders</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111010;
+    --paper: #F7F4EF;
+    --cream: #EDE8E0;
+    --accent: #C8512A;
+    --muted: #8C8478;
+    --border: #DDD8CF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    cursor: default;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineGrow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .fade-up { animation: fadeUp 0.8s cubic-bezier(.22,1,.36,1) both; }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.4s; }
+  .d4 { animation-delay: 0.55s; }
+  .d5 { animation-delay: 0.7s; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 60px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 60px; max-width: 1100px; margin: 0 auto; }
+
+  /* ── HERO ── */
+  .hero {
+    padding-top: 160px;
+    padding-bottom: 80px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 60px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  .eyebrow-text {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5.5vw, 68px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 40px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+  .btn-secondary {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* ── HERO CARD ── */
+  .hero-card {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-card::before {
+    content: '"';
+    position: absolute;
+    top: -20px; right: 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 140px;
+    color: var(--accent);
+    opacity: 0.15;
+    line-height: 1;
+  }
+  .card-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .card-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #E8E4DC;
+    margin-bottom: 24px;
+  }
+  .card-divider {
+    width: 32px; height: 1px;
+    background: var(--accent);
+    margin-bottom: 20px;
+  }
+  .card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 10px;
+    color: #7A756C;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 100px;
+  }
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 60px;
+  }
+  .about-grid h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+  .about-grid h2 em { font-style: italic; color: var(--accent); }
+  .about-body { font-size: 15px; color: var(--muted); line-height: 1.8; }
+  .about-body p { margin-bottom: 18px; }
+  .about-body strong { color: var(--ink); font-weight: 500; }
+  .about-right { padding-top: 44px; }
+  .principle {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .principle:first-child { border-top: 1px solid var(--border); }
+  .principle-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .principle-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-bottom: 5px;
+    color: var(--ink);
+  }
+  .principle-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── SAMPLES ── */
+  .samples-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .samples-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .disclaimer {
+    background: #FFF8F5;
+    border: 1px solid #F0C9B8;
+    border-left: 3px solid var(--accent);
+    padding: 12px 18px;
+    font-size: 12px;
+    color: #A06040;
+    max-width: 340px;
+    line-height: 1.5;
+  }
+  .posts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .post-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 32px 28px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .post-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .post-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .post-card:hover::after { transform: scaleX(1); }
+  .post-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: block;
+  }
+  .post-hook {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .post-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.75;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .post-fade {
+    position: absolute;
+    bottom: 60px; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(transparent, white);
+  }
+  .post-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .post-topic { font-size: 11px; color: #B0A898; }
+  .read-more {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    transition: opacity 0.2s;
+  }
+  .read-more:hover { opacity: 0.7; }
+
+  /* Modal */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17,16,16,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--paper);
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 48px 40px;
+    position: relative;
+    animation: fadeUp 0.4s cubic-bezier(.22,1,.36,1);
+  }
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: none; border: none;
+    font-size: 22px;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--ink); }
+  .modal-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+  .modal-body {
+    font-size: 15px;
+    line-height: 1.9;
+    color: #333;
+    white-space: pre-line;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── SERVICES ── */
+  .services-section { border-top: 1px solid var(--border); }
+  .services-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 48px;
+  }
+  .packages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 48px;
+  }
+  .package {
+    background: var(--paper);
+    padding: 36px 28px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .package:hover { background: var(--ink); color: var(--paper); }
+  .package:hover .pkg-price,
+  .package:hover .pkg-name,
+  .package:hover .pkg-desc { color: var(--paper); }
+  .package:hover .pkg-feature { color: #B0A898; }
+  .package:hover .pkg-feature::before { color: var(--accent); }
+  .package:hover .pkg-tag { background: var(--accent); color: #fff; }
+  .pkg-tag {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--cream);
+    color: var(--muted);
+    padding: 4px 10px;
+    display: inline-block;
+    margin-bottom: 20px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .pkg-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+    transition: color 0.2s;
+  }
+  .pkg-period { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .pkg-name {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s;
+  }
+  .pkg-features { list-style: none; margin-bottom: 20px; }
+  .pkg-feature {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 5px 0;
+    transition: color 0.2s;
+  }
+  .pkg-feature::before { content: '→ '; color: var(--accent); }
+  .pkg-desc {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.5;
+    transition: color 0.2s;
+  }
+
+  /* ── PROCESS ── */
+  .process-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+  .process-step {
+    background: var(--paper);
+    padding: 32px 24px;
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .step-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .step-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--ink);
+    color: var(--paper);
+    max-width: 100%;
+    padding: 100px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'SHIVASRI';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(80px, 15vw, 180px);
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--accent); }
+  .cta-sub {
+    font-size: 15px;
+    color: #6E6860;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    margin-bottom: 48px;
+  }
+  .btn-light {
+    background: var(--paper);
+    color: var(--ink);
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-block;
+  }
+  .btn-light:hover { background: var(--accent); color: #fff; }
+  .btn-outline-light {
+    background: transparent;
+    color: var(--paper);
+    padding: 16px 36px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid #3A3730;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .btn-outline-light:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-details {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .contact-item { font-size: 13px; color: #6E6860; }
+  .contact-item a { color: #B0A898; text-decoration: none; transition: color 0.2s; }
+  .contact-item a:hover { color: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    border-top: 1px solid #2A2520;
+    padding: 24px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #4A4540;
+  }
+  .footer-copy { font-size: 11px; color: #3A3530; letter-spacing: 0.08em; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .hero { grid-template-columns: 1fr; padding-top: 120px; }
+    .hero-card { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .posts-grid { grid-template-columns: 1fr; }
+    .packages { grid-template-columns: 1fr; }
+    .process-row { grid-template-columns: 1fr 1fr; }
+    .cta-section { padding: 80px 24px; }
+    footer { padding: 20px 24px; flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Shivasri</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#samples">Samples</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow fade-up d1">
+      <div class="dot"></div>
+      <span class="eyebrow-text">Available for new clients · March 2026</span>
+    </div>
+    <h1 class="fade-up d2">
+      I write LinkedIn<br>content that makes<br><em>founders unmissable.</em>
+    </h1>
+    <p class="hero-sub fade-up d3">
+      Startup founders have the best stories. They just never have time to tell them.
+      I turn their insights, lessons, and experiences into posts that build authority
+      and attract real opportunities — without them writing a single word.
+    </p>
+    <div class="hero-cta fade-up d4">
+      <a href="#contact" class="btn-primary">Work With Me</a>
+    </div>
+  </div>
+
+  <div class="hero-card fade-up d5">
+    <div class="card-label">My Promise</div>
+    <div class="card-quote">
+      "You talk. I write. Your audience grows.
+      You don't spend a single hour staring at a blank LinkedIn screen."
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-stats">
+      <div>
+        <div class="stat-num">5</div>
+        <div class="stat-label">Topic niches covered</div>
+      </div>
+      <div>
+        <div class="stat-num">48hr</div>
+        <div class="stat-label">First draft turnaround</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Written in your voice</div>
+      </div>
+      <div>
+        <div class="stat-num">2</div>
+        <div class="stat-label">Spots open this month</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <div class="section-eyebrow">About</div>
+      <h2>The writer<br>behind <em>the words.</em></h2>
+      <div class="about-body">
+        <p>I'm Shivasri — a BTech Computer Science student specialising in AI, and a LinkedIn ghostwriter for startup founders and tech builders.</p>
+        <p>I started writing because I noticed a pattern: the most interesting founders — the ones with real stories, hard lessons, and genuine insight — were invisible on LinkedIn. Not because they had nothing to say, but because <strong>they had no time to say it.</strong></p>
+        <p>That's the gap I fill. I study how you think, interview you about your journey, and translate it into posts that sound exactly like you — just sharper, more structured, and actually published.</p>
+        <p>Being a student in AI gives me a genuine edge: I understand the founder and tech landscape from the inside, and I use AI tools to work faster without sacrificing the human voice that makes LinkedIn content actually work.</p>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="section-eyebrow">Writing Principles</div>
+      <div class="principle">
+        <span class="principle-num">01</span>
+        <div>
+          <div class="principle-title">Story before advice</div>
+          <div class="principle-desc">Every great post starts with a real experience. Generic advice gets scrolled past. Stories get shared.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-num">02</span>
+        <div>
+          <div class="principle-title">Hooks that earn the click</div>
+          <div class="principle-desc">The first line is everything. If it doesn't stop the scroll, nothing else matters.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-num">03</span>
+        <div>
+          <div class="principle-title">Conversational, not corporate</div>
+          <div class="principle-desc">Short sentences. Real language. Posts that feel like a message from a smart friend, not a press release.</div>
+        </div>
+      </div>
+      <div class="principle">
+        <span class="principle-num">04</span>
+        <div>
+          <div class="principle-title">Ends with a conversation</div>
+          <div class="principle-desc">Every post closes with a takeaway or question that invites people in. Comments = reach = growth.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITING SAMPLES -->
+<section id="samples">
+  <div class="samples-header">
+    <div>
+      <div class="section-eyebrow">Writing Samples</div>
+      <h2>What founder content<br>should look like.</h2>
+    </div>
+    <div class="disclaimer">
+      ℹ️ These are sample posts written in founder voice to demonstrate style, structure, and storytelling approach. All written by Shivasri.
+    </div>
+  </div>
+
+  <div class="posts-grid">
+
+    <div class="post-card" data-modal="modal1">
+      <span class="post-tag">Startup Lessons · Product–Market Fit</span>
+      <div class="post-hook">I spent $20,000 building a product nobody wanted</div>
+      <div class="post-body">The problem wasn't the engineering.
+
+It was my ego.
+
+For six months, I stayed in "stealth mode."
+Polishing features.
+Perfecting the UI.
+Convincing myself we were building something revolutionary.
+
+Launch day came.
+And nothing happened.</div>
+      <div class="post-fade"></div>
+      <div class="post-footer">
+        <span class="post-topic">Validation · PMF · Founder mindset</span>
+        <button class="read-more">Read full post ↗</button>
+      </div>
+    </div>
+
+    <div class="post-card" data-modal="modal2">
+      <span class="post-tag">Hiring & Team Building</span>
+      <div class="post-hook">I spent $200,000 learning a hiring lesson I could've learned from a $20 book.</div>
+      <div class="post-body">In the early days of my startup, I thought hiring fast meant we were growing fast.
+
+More people.
+More momentum.
+More progress.
+
+At least that's what I told myself.
+
+Three months later, the cracks started showing.</div>
+      <div class="post-fade"></div>
+      <div class="post-footer">
+        <span class="post-topic">Hiring · Culture · Early teams</span>
+        <button class="read-more">Read full post ↗</button>
+      </div>
+    </div>
+
+    <div class="post-card" data-modal="modal3">
+      <span class="post-tag">AI & The Future of Work</span>
+      <div class="post-hook">I stopped hiring for "experience." Now I hire for speed of learning.</div>
+      <div class="post-body">Six months ago, I thought AI would just be a fancy spellcheck for my team.
+
+I was wrong.
+
+One of our junior developers used LLMs to ship a feature in two days.
+A feature that used to take our senior lead almost two weeks.
+
+The difference wasn't intelligence.
+It was mindset.</div>
+      <div class="post-fade"></div>
+      <div class="post-footer">
+        <span class="post-topic">AI · Adaptability · Future of work</span>
+        <button class="read-more">Read full post ↗</button>
+      </div>
+    </div>
+
+    <div class="post-card" data-modal="modal4">
+      <span class="post-tag">Founder Productivity</span>
+      <div class="post-hook">I spent three years working 14-hour days… and stayed in the exact same place.</div>
+      <div class="post-body">My calendar was full.
+Back-to-back Zoom calls.
+Endless Slack notifications.
+"Quick syncs" that somehow lasted an hour.
+
+I felt busy every minute of the day.
+But something didn't add up.
+
+Revenue wasn't moving.
+The product wasn't improving.</div>
+      <div class="post-fade"></div>
+      <div class="post-footer">
+        <span class="post-topic">Productivity · Focus · Deep work</span>
+        <button class="read-more">Read full post ↗</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 5th post - full width -->
+  <div class="post-card" data-modal="modal5" style="margin-top:0;">
+    <span class="post-tag">Building in Public</span>
+    <div class="post-hook" style="max-width:600px;">The moment I stopped hiding the messy middle… my startup actually started growing.</div>
+    <div class="post-body" style="-webkit-line-clamp:4;">For the first year, I only shared the polished wins. Funding updates. Perfect product screenshots. Milestone hires. It all looked impressive. But nobody cared. Then one Sunday, our server crashed. For six hours.</div>
+    <div class="post-footer" style="max-width:600px;">
+      <span class="post-topic">Transparency · Trust · Community building</span>
+      <button class="read-more">Read full post ↗</button>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="services-section">
+  <div class="section-eyebrow">Services</div>
+  <h2>Simple packages.<br>Real results.</h2>
+
+  <div class="packages">
+    <div class="package">
+      <span class="pkg-tag">Best for getting started</span>
+      <div class="pkg-price">$100</div>
+      <div class="pkg-period">per month</div>
+      <div class="pkg-name">Starter</div>
+      <ul class="pkg-features">
+        <li class="pkg-feature">8 LinkedIn posts / month</li>
+        <li class="pkg-feature">Storytelling-style content</li>
+        <li class="pkg-feature">Hook-optimised format</li>
+        <li class="pkg-feature">1 revision per post</li>
+        <li class="pkg-feature">Delivered via Google Doc</li>
+      </ul>
+      <div class="pkg-desc">Build a consistent presence without investing more time per month than a single meeting.</div>
+    </div>
+    <div class="package">
+      <span class="pkg-tag">Most popular · Recommended</span>
+      <div class="pkg-price">$200</div>
+      <div class="pkg-period">per month</div>
+      <div class="pkg-name">Growth</div>
+      <ul class="pkg-features">
+        <li class="pkg-feature">12 LinkedIn posts / month</li>
+        <li class="pkg-feature">Monthly 30-min strategy call</li>
+        <li class="pkg-feature">Profile optimisation (once)</li>
+        <li class="pkg-feature">2 revisions per post</li>
+        <li class="pkg-feature">Engagement strategy tips</li>
+      </ul>
+      <div class="pkg-desc">For founders serious about building a LinkedIn presence that generates inbound leads.</div>
+    </div>
+    <div class="package">
+      <span class="pkg-tag">Full content engine</span>
+      <div class="pkg-price">$350</div>
+      <div class="pkg-period">per month</div>
+      <div class="pkg-name">Premium</div>
+      <ul class="pkg-features">
+        <li class="pkg-feature">16 posts + 2 long-form pieces</li>
+        <li class="pkg-feature">Weekly strategy sessions</li>
+        <li class="pkg-feature">Full profile overhaul</li>
+        <li class="pkg-feature">Newsletter content repurposing</li>
+        <li class="pkg-feature">Priority 24hr turnaround</li>
+      </ul>
+      <div class="pkg-desc">Complete LinkedIn presence management. You focus on building — I handle your entire content engine.</div>
+    </div>
+  </div>
+
+  <!-- Process -->
+  <div class="process-row">
+    <div class="process-step">
+      <div class="step-num">01</div>
+      <div class="step-title">Discovery Call</div>
+      <div class="step-desc">A 20-minute call where I ask you about your journey, opinions, and what you want to be known for.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">02</div>
+      <div class="step-title">Voice Study</div>
+      <div class="step-desc">I study how you speak, write, and think — so the posts sound like you, not a generic ghostwriter.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">03</div>
+      <div class="step-title">First Draft</div>
+      <div class="step-desc">Your first batch of posts is delivered within 48 hours, ready for your review in a shared Google Doc.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">04</div>
+      <div class="step-title">Revise & Publish</div>
+      <div class="step-desc">We refine until you're happy. Then you post — or I can schedule directly if you prefer.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" style="padding:0; max-width:100%;">
+  <div class="cta-section">
+    <div class="section-eyebrow" style="justify-content:center; color:var(--accent); margin-bottom:24px;">
+      <span style="font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;">Let's Work Together</span>
+    </div>
+    <h2>Ready to show up on<br>LinkedIn <em>every week?</em></h2>
+    <p class="cta-sub">
+      I'm currently onboarding 2 new clients this month.<br>
+      DM me on LinkedIn or send an email — I'll send you a free sample post written in your voice within 48 hours.
+    </p>
+    <div class="cta-actions">
+      <a href="https://www.linkedin.com/in/shivu-s-91828b373" target="_blank" class="btn-light">Message on LinkedIn</a>
+      <a href="mailto:shivus40578@gmail.com" class="btn-outline-light">Send an Email</a>
+    </div>
+    <div class="contact-details">
+      <span class="contact-item">✉️ <a href="mailto:shivus40578@gmail.com">shivus40578@gmail.com</a></span>
+      <span class="contact-item">💼 <a href="https://www.linkedin.com/in/shivu-s-91828b373" target="_blank">linkedin.com/in/shivu-s</a></span>
+      <span class="contact-item">📍 India · Available for global clients</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Shivasri</span>
+  <span class="footer-copy">LinkedIn Ghostwriter for Startup Founders · 2025</span>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-bg" id="modal1" data-close="modal1">
+  <div class="modal">
+    <button class="modal-close" data-dismiss="modal1">×</button>
+    <div class="modal-tag">Startup Lessons · Product–Market Fit</div>
+    <div class="modal-title">I spent $20,000 building a product nobody wanted</div>
+    <div class="modal-body">The problem wasn't the engineering.
+
+It was my ego.
+
+For six months, I stayed in "stealth mode."
+Polishing features.
+Perfecting the UI.
+Convincing myself we were building something revolutionary.
+
+Launch day came.
+And nothing happened.
+
+No signups.
+No excitement.
+Just silence.
+
+That's when it hit me:
+I hadn't built a solution.
+I'd built a monument to my own assumptions.
+
+Product–market fit isn't discovered behind a keyboard.
+It's discovered in messy conversations with real users.
+The ones most founders avoid.
+
+The lesson:
+→ Validate the pain before writing a single line of code
+→ If you can't sell the idea on a whiteboard, the app won't save you
+→ Fall in love with the problem, not your first solution
+
+Because if you're not talking to users every week…
+You're not building a startup.
+You're just expensive daydreaming.
+
+What's the most expensive lesson your career has taught you?</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal2" data-close="modal2">
+  <div class="modal">
+    <button class="modal-close" data-dismiss="modal2">×</button>
+    <div class="modal-tag">Hiring & Team Building</div>
+    <div class="modal-title">I spent $200,000 learning a hiring lesson I could've learned from a $20 book.</div>
+    <div class="modal-body">In the early days of my startup, I thought hiring fast meant we were growing fast.
+
+More people.
+More momentum.
+More progress.
+
+At least that's what I told myself.
+
+So I hired quickly.
+Great resumes.
+Big company backgrounds.
+Impressive LinkedIn profiles.
+
+Three months later, the cracks started showing.
+Communication slowed down.
+Product velocity dropped.
+And I was spending most of my time managing conflicts instead of building the company.
+
+Eventually, I had to let three "star hires" go in the same week.
+It was brutal.
+
+But it taught me something every founder eventually learns:
+A B-player in a startup isn't neutral.
+They're a liability.
+
+The lesson:
+→ Hire for hunger, not just pedigree
+→ If it's not a "Hell Yes," it's a No
+→ One A-player will outperform five average hires
+
+Move fast with your product.
+But move slow with your team.
+Your runway will thank you.
+
+What's a hiring lesson you learned the hard way?</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal3" data-close="modal3">
+  <div class="modal">
+    <button class="modal-close" data-dismiss="modal3">×</button>
+    <div class="modal-tag">AI & The Future of Work</div>
+    <div class="modal-title">I stopped hiring for "experience." Now I hire for speed of learning.</div>
+    <div class="modal-body">Six months ago, I thought AI would just be a fancy spellcheck for my team.
+
+I was wrong.
+
+One of our junior developers used LLMs to ship a feature in two days.
+A feature that used to take our senior lead almost two weeks.
+
+The difference wasn't intelligence.
+It was mindset.
+
+The senior engineer was stuck doing things the "old way."
+The junior engineer treated AI like a tireless co-founder.
+
+That's when it hit me.
+
+AI isn't going to replace your job.
+But someone who knows how to leverage AI properly absolutely might.
+
+The real competitive advantage isn't what you know anymore.
+It's how fast you can learn tools that didn't exist yesterday.
+
+The takeaway:
+→ Stop hiring only for years of experience
+→ Look for people obsessed with learning new tools
+→ In fast industries, adaptability beats expertise
+
+Because in a world moving this fast…
+The winners won't be the most experienced.
+They'll be the most adaptable.
+
+Is your team actually saving time with AI — or just using it to write better emails?</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal4" data-close="modal4">
+  <div class="modal">
+    <button class="modal-close" data-dismiss="modal4">×</button>
+    <div class="modal-tag">Founder Productivity</div>
+    <div class="modal-title">I spent three years working 14-hour days… and stayed in the exact same place.</div>
+    <div class="modal-body">My calendar was full.
+Back-to-back Zoom calls.
+Endless Slack notifications.
+"Quick syncs" that somehow lasted an hour.
+
+I felt busy every minute of the day.
+Exhausted. Stressed. Always "on."
+
+But something didn't add up.
+Revenue wasn't moving.
+The product wasn't improving.
+
+That's when I realized something uncomfortable.
+I wasn't productive.
+I was just busy.
+
+Founders often confuse motion with progress.
+We fill our days with meetings because it feels productive to be needed by everyone.
+
+But the most valuable thing a founder can do is actually the opposite.
+Be unavailable.
+
+If your entire day is reactive…
+You're not leading.
+You're just a very expensive firefighter.
+
+So I changed one rule.
+The first four hours of my day are protected.
+No Slack. No meetings. No "quick calls."
+Just deep work.
+
+Because one hour of focused building will always beat ten hours of busywork.
+
+Are you actually moving the needle today… or just clearing your inbox?</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal5" data-close="modal5">
+  <div class="modal">
+    <button class="modal-close" data-dismiss="modal5">×</button>
+    <div class="modal-tag">Building in Public</div>
+    <div class="modal-title">The moment I stopped hiding the messy middle… my startup actually started growing.</div>
+    <div class="modal-body">For the first year, I only shared the polished wins.
+Funding updates.
+Perfect product screenshots.
+Milestone hires.
+
+It all looked impressive.
+But nobody cared.
+
+Then one Sunday, our server crashed.
+For six hours.
+Customers couldn't log in.
+The team was panicking.
+Slack was chaos.
+
+Instead of hiding it, I posted about it.
+I shared what went wrong.
+The frantic debugging.
+And the lesson we learned about redundancy.
+
+That post did more for our brand than a year of "perfect" updates.
+My inbox filled with messages.
+
+Not criticism.
+Other founders saying, "Been there."
+And potential customers saying they trusted us because we were honest.
+
+That's when I understood something important.
+
+Building in public isn't about bragging.
+It's about building trust.
+
+When people see how you solve problems, they don't just buy your product.
+They start rooting for you.
+
+The takeaway:
+→ Transparency builds credibility
+→ People connect with the journey, not just the wins
+→ Your process is more interesting than your highlights
+
+Stop waiting for the perfect update.
+Share the journey instead.
+
+Are you building in silence… or bringing your audience along for the ride?</div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Open modal when clicking a post card
+  document.querySelectorAll('[data-modal]').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var id = card.getAttribute('data-modal');
+      var modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  // Close modal when clicking background overlay
+  document.querySelectorAll('.modal-bg').forEach(function(bg) {
+    bg.addEventListener('click', function(e) {
+      if (e.target === bg) {
+        bg.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Close modal when clicking X button
+  document.querySelectorAll('[data-dismiss]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = btn.getAttribute('data-dismiss');
+      var modal = document.getElementById(id);
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-bg.open').forEach(function(m) {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+
+});
+</script>
+
+</body>
+</html>
